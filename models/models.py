@@ -102,12 +102,12 @@ class VGGNet(nn.Module):
             self.yaml['workers'] = batch_size if batch_size <= 4 else 4
 
         train_dataset = CustomDataset(trainpack, 
-                                      datadir=self.job.dataset.root_folder, 
+                                      datadir=self.root_dir, 
                                       category_names=self.category_names, 
                                       imgsz=imgsz)
 
         valid_dataset = CustomDataset(validpack, 
-                                      datadir=self.job.dataset.root_folder, 
+                                      datadir=self.root_dir, 
                                       category_names=self.category_names, 
                                       imgsz=imgsz)
 
@@ -131,8 +131,8 @@ class VGGNet(nn.Module):
 
         scheduler = ReduceLROnPlateau(self.optimizer,
                                       verbose=True,
-                                      factor=self.job.hyper_params['lr_scheduler']['factor'],
-                                      patience=self.job.hyper_params['lr_scheduler']['patience'])
+                                      factor=float(self.yaml['TRAIN']['factor']),
+                                      patience=int(self.yaml['TRAIN']['factor']))
 
         self = self.to(_device)
         

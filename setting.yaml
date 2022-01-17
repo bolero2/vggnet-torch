@@ -25,3 +25,7 @@ fc_layer:
 DATASET:
   root_path: '/Users/bolero/dc/dataset/cifar10'
   ext: 'png'
+
+TRAIN:
+  factor: 0.1
+  patience: 5
