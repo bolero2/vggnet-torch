@@ -8,16 +8,12 @@ from models import VGGNet
 
 def get_model(yaml_path : str = './setting.yaml'):
     file_path = os.path.split(sys.modules[__name__].__file__)[0]
-
     yaml_file = os.path.join(file_path, yaml_path)
 
     assert os.path.isfile(yaml_file), "There isn't setting.yaml file!"
     with open(yaml_file) as f:
         setting = yaml.load(f, Loader=yaml.SafeLoader)
     assert len(setting), "either setting value must be specified. (yaml file is empty.)"
-    
-    num_categories = setting['nc']
-    model_type = setting['network']
 
     if not isinstance(setting['classes'], list) and setting['classes'].split('.')[1] == 'txt':
         file_list = glob(f"{setting['DATASET']['root_path']}/**/{setting['classes']}", recursive=True)
@@ -31,6 +27,10 @@ def get_model(yaml_path : str = './setting.yaml'):
                 classes[i] = c[:-1]
 
         setting['classes'] = classes
+
+    num_categories = setting['nc'] = len(setting['classes'])
+    model_type = setting['network']
+    setting['file_path'] = file_path
 
     network = VGGNet(
         name=model_type, ch=3, num_classes=num_categories, setting=setting

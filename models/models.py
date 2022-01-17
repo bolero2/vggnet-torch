@@ -28,7 +28,10 @@ class VGGNet(nn.Module):
         self.category_names = self.yaml['classes']
         self.root_dir = self.yaml['DATASET']['root_path']
         self.ext = self.yaml['DATASET']['ext']
-
+        self.save_dir = os.path.join(self.yaml['file_path'], self.yaml['TRAIN']['exp'])
+        if not os.path.isdir(self.save_dir):
+            os.makedirs(self.save_dir, exist_ok=True)
+        
         self.conv_layers = list()
         self.flatten = list()
         self.fc_layers = list()
@@ -69,6 +72,8 @@ class VGGNet(nn.Module):
 
         self._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.criterion = nn.CrossEntropyLoss()
+
+        self.best_valid = float("inf")
 
     def forward(self, x, phase='train'):
         for layer in self.model:
@@ -172,6 +177,10 @@ class VGGNet(nn.Module):
                                               criterion=self.criterion)
 
             scheduler.step(round(val_loss, 4))
+
+            if val_loss < self.best_valid:
+                torch.save(self, os.path.join(self.save_dir, "best.pt"))
+        torch.save(self, os.path.join(self.save_dir, "last.pt"))
 
     def evaluate(self, model, dataloader, valid_iter=1, batch_size=1, criterion=None):
         is_cuda = torch.cuda.is_available()
