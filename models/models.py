@@ -22,10 +22,10 @@ class VGGNet(nn.Module):
         super(VGGNet, self).__init__()
         # =========================== Setting ============================
         self.yaml = setting
-        self.img_size = self.yaml['img_size']
 
         self.num_classes = num_classes
-        self.category_names = [str(x) for x in range(0, self.num_classes)]
+        self.img_size = self.yaml['img_size']
+        self.category_names = self.yaml['classes']
         self.root_dir = self.yaml['DATASET']['root_path']
         self.ext = self.yaml['DATASET']['ext']
 
@@ -117,7 +117,7 @@ class VGGNet(nn.Module):
         trainloader = DataLoader(train_dataset,
                                  batch_size=batch_size, 
                                  num_workers=self.yaml['workers'], 
-                                 shuffle=False,
+                                 shuffle=True,
                                  pin_memory=True)
 
         validloader = DataLoader(valid_dataset, 
@@ -132,7 +132,7 @@ class VGGNet(nn.Module):
         scheduler = ReduceLROnPlateau(self.optimizer,
                                       verbose=True,
                                       factor=float(self.yaml['TRAIN']['factor']),
-                                      patience=int(self.yaml['TRAIN']['factor']))
+                                      patience=int(self.yaml['TRAIN']['patience']))
 
         self = self.to(_device)
         

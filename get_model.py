@@ -1,8 +1,7 @@
 import sys
 import os
 import yaml
-import json
-import glob
+from glob import glob
 
 from models import VGGNet
 
@@ -18,8 +17,20 @@ def get_model(yaml_path : str = './setting.yaml'):
     assert len(setting), "either setting value must be specified. (yaml file is empty.)"
     
     num_categories = setting['nc']
-    category_names = setting['classes']
     model_type = setting['network']
+
+    if not isinstance(setting['classes'], list) and setting['classes'].split('.')[1] == 'txt':
+        file_list = glob(f"{setting['DATASET']['root_path']}/**/{setting['classes']}", recursive=True)
+        assert len(file_list) == 1, "Error."
+        file_list = file_list[0]
+        class_txt = open(file_list, 'r')
+        classes = class_txt.readlines()
+        class_txt.close()
+        for i, c in enumerate(classes):
+            if c[-1] == '\n':
+                classes[i] = c[:-1]
+
+        setting['classes'] = classes
 
     network = VGGNet(
         name=model_type, ch=3, num_classes=num_categories, setting=setting
@@ -49,7 +60,7 @@ if __name__ == "__main__":
     }
 
     network = VGGNet(
-        name="vgg19", ch=3, num_classes=20, setting=setting
+        name="vgg19", ch=3, num_classes=setting['nc'], setting=setting
     )
 
     print(network)
