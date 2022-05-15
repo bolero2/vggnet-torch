@@ -1,5 +1,5 @@
 classes: 'class.txt'                              # write here
-network: 'vgg16'                                  # write here ('vgg16' or 'vgg19')
+network: 'vgg16'                                  # write here, (default:'vgg16' or 'vgg19')
 
 nc: 1
 img_size: [224, 224, 3]
