@@ -35,9 +35,18 @@ if __name__ == "__main__":
         labelname = os.path.dirname(elem).split('/')[-1]
         testset[0].append(elem)
         testset[1].append(labelname)
+    
+    """
+    trainset = [
+        [a1.jpg, a2.jpg, a3.jpg, ... , aN.jpg],
+        [0,      3,      10,     ... , 6     ]
+    ]
+    
+    validset has same form as A.
+    """
 
     model.fit(x=trainset[0],
               y=trainset[1],
               validation_data=validset,
-              epochs=30,
-              batch_size=4)
+              epochs=setting['epoch'],
+              batch_size=setting['batch_size'])

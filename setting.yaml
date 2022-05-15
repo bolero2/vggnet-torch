@@ -30,3 +30,5 @@ TRAIN:
   exp: 'run'                                      # write here
   factor: 0.1
   patience: 5
+  epoch: 30
+  batch_size: 16
